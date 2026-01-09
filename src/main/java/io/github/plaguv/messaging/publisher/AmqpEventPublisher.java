@@ -1,6 +1,6 @@
-package de.fhdw.messaging.publisher;
+package io.github.plaguv.messaging.publisher;
 
-import de.fhdw.messaging.config.properties.AmqpProperties;
+import io.github.plaguv.messaging.config.properties.AmqpProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 

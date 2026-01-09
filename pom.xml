@@ -2,24 +2,63 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.fhdw</groupId>
+    <groupId>io.github.plaguv</groupId>
     <artifactId>messaging-amqp-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-alpha-1</version>
     <packaging>jar</packaging>
 
     <name>Messaging AMQP Starter</name>
-    <description>Messaging Starter designed for Spring Boots AMQP</description>
+    <description>
+        A Module designed to serve as a messaging starter for Spring Boots AMQP.
+        The starter autoconfigures and sets up default beans related to AMQP messaging services.
+    </description>
+    <url>https://github.com/plaguv/messaging-amqp-starter</url>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/plaguv/messaging-amqp-starter.git</connection>
+        <developerConnection>scm:git:ssh://github.com/plaguv/messaging-amqp-starter.git</developerConnection>
+        <url>https://github.com/plaguv/messaging-amqp-starter</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>plaguv</id>
+            <name>Erik</name>
+            <url>https://github.com/plaguv</url>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>io.github.plaguv</groupId>
+            <artifactId>messaging-amqp-contracts</artifactId>
+            <version>1.0.0-alpha-1</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>4.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>6.1.0-M1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -29,24 +68,69 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
-                <configuration>
-                    <release>16</release>
-                    <encoding>UTF-8</encoding>
-                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>Github Packages</name>
-            <url>https://maven.pkg.github.com/Plaguv/messaging-amqp-starter</url>
-        </repository>
-        <snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages Snapshots</name>
-            <url>https://maven.pkg.github.com/Plaguv/messaging-amqp-starter</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.9.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

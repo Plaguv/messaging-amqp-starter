@@ -1,8 +1,8 @@
-package de.fhdw.messaging.config.autoconfiguration;
+package io.github.plaguv.messaging.config.autoconfiguration;
 
-import de.fhdw.messaging.config.properties.AmqpProperties;
-import de.fhdw.messaging.listener.AmqpEventListener;
-import de.fhdw.messaging.listener.EventListener;
+import io.github.plaguv.messaging.config.properties.AmqpProperties;
+import io.github.plaguv.messaging.listener.AmqpEventListener;
+import io.github.plaguv.messaging.listener.EventListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

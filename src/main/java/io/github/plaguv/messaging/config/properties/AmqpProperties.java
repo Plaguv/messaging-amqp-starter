@@ -1,4 +1,4 @@
-package de.fhdw.messaging.config.properties;
+package io.github.plaguv.messaging.config.properties;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;

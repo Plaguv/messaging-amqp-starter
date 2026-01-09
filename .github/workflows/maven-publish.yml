@@ -1,31 +1,45 @@
-name: Maven Package
+name: Publish package to Maven Central
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
 jobs:
-  build:
-
+  publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 16
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '16'
           distribution: 'temurin'
-          server-id: github
-          settings-path: ${{ github.workspace }}
+          java-version: '17'
+          server-id: central
+          server-username: SONATYPE_USERNAME
+          server-password: SONATYPE_TOKEN
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      - name: Import GPG key
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          KEY_ID=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+          echo "Using GPG key: $KEY_ID"
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Configure GPG agent
+        run: |
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          echo "passphrase=$GPG_PASSPHRASE" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Publish to Maven Central
+        run: mvn --batch-mode -Dgpg.passphrase="$GPG_PASSPHRASE" deploy
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_TOKEN: ${{ secrets.SONATYPE_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
