@@ -2,7 +2,11 @@ package io.github.plaguv.messaging.config.autoconfiguration;
 
 import io.github.plaguv.messaging.config.properties.AmqpProperties;
 import io.github.plaguv.messaging.listener.AmqpEventListenerRegistrar;
-import org.springframework.amqp.core.AmqpAdmin;
+import io.github.plaguv.messaging.listener.EventListenerRegistrar;
+import io.github.plaguv.messaging.publisher.EventRouter;
+import io.github.plaguv.messaging.publisher.TopologyDeclarer;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,8 +19,13 @@ public class AmqpEventListenerAutoConfiguration {
     public AmqpEventListenerAutoConfiguration() {}
 
     @Bean
-    @ConditionalOnMissingBean(AmqpEventListenerRegistrar.class)
-    public AmqpEventListenerRegistrar amqpEventListenerRegistrar(AmqpAdmin amqpAdmin) {
-        return new AmqpEventListenerRegistrar(amqpAdmin);
+    @ConditionalOnMissingBean(EventListenerRegistrar.class)
+    public EventListenerRegistrar eventListenerRegistrar(
+            RabbitListenerEndpointRegistry registry,
+            RabbitListenerContainerFactory<?> factory,
+            TopologyDeclarer topologyDeclarer,
+            EventRouter eventRouter
+    ) {
+        return new AmqpEventListenerRegistrar(registry, factory, topologyDeclarer, eventRouter);
     }
 }

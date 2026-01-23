@@ -1,6 +1,7 @@
 package io.github.plaguv.messaging.publisher;
 
 import io.github.plaguv.contracts.common.EventEnvelope;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
@@ -31,15 +32,15 @@ public class AmqpEventPublisher implements EventPublisher {
     }
 
     @Override
-    public void publishMessage(EventEnvelope eventEnvelope) {
-        if (eventEnvelope == null) {
-            throw new IllegalArgumentException("Parameter 'eventEnvelope' cannot be null");
-        }
+    public void publishMessage(@Nonnull EventEnvelope eventEnvelope) {
         try {
             String exchange = eventRouter.resolveExchange(eventEnvelope);
             String routingKey = eventRouter.resolveRoutingKey(eventEnvelope);
 
-            topologyDeclarer.declareExchangeIfAbsent(exchange, eventEnvelope);
+            topologyDeclarer.declareExchangeIfAbsent(eventEnvelope);
+            topologyDeclarer.declareQueueIfAbsent(eventEnvelope);
+            topologyDeclarer.declareBindingIfAbsent(eventEnvelope);
+
             rabbitTemplate.convertAndSend(
                     exchange,
                     routingKey,
@@ -50,7 +51,7 @@ public class AmqpEventPublisher implements EventPublisher {
         }
     }
 
-    private Message buildMessage(EventEnvelope eventEnvelope) {
+    private Message buildMessage(@Nonnull EventEnvelope eventEnvelope) {
         // Header
         MessageProperties props = new MessageProperties();
         // Mandatory
