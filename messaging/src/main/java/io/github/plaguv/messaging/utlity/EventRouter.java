@@ -1,7 +1,7 @@
 package io.github.plaguv.messaging.utlity;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
-import io.github.plaguv.contract.envelope.routing.EventType;
+import io.github.plaguv.contract.envelope.EventType;
 import jakarta.annotation.Nonnull;
 
 public interface EventRouter {

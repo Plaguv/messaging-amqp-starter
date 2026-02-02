@@ -10,10 +10,8 @@ class EventRoutingTest {
     @DisplayName("Should throw if null parameter in constructor")
     void throwsOnNull() {
         Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new EventRouting(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
                 () -> new EventRouting(null, null));
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new EventRouting(EventType.STORE_OPENED, null));
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new EventRouting(null, EventDispatchType.DIRECT));
     }
 }

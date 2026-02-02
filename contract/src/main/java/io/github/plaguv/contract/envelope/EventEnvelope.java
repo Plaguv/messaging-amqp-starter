@@ -1,22 +1,25 @@
 package io.github.plaguv.contract.envelope;
 
-import io.github.plaguv.contract.event.EventInstance;
+import io.github.plaguv.contract.envelope.payload.EventInstance;
 import io.github.plaguv.contract.envelope.metadata.EventMetadata;
 import io.github.plaguv.contract.envelope.metadata.EventVersion;
 import io.github.plaguv.contract.envelope.routing.EventDispatchType;
 import io.github.plaguv.contract.envelope.routing.EventRouting;
-import io.github.plaguv.contract.envelope.routing.EventType;
 
 import java.time.Instant;
 import java.util.UUID;
 
 public record EventEnvelope(
         EventMetadata metadata,
+        EventRouting eventRouting,
         EventInstance payload
 ) {
     public EventEnvelope {
         if (metadata == null) {
             throw new IllegalArgumentException("EventEnvelope attribute 'metadata' cannot be null");
+        }
+        if (eventRouting == null) {
+            throw new IllegalArgumentException("EventEnvelope attribute 'routing' cannot be null");
         }
         if (payload == null) {
             throw new IllegalArgumentException("EventEnvelope attribute 'payload' cannot be null");
@@ -34,7 +37,6 @@ public record EventEnvelope(
         private Instant occurredAt;
         private Class<?> producer;
 
-        private EventType eventType;
         private EventDispatchType eventDispatchType;
 
         private EventInstance payload;
@@ -76,13 +78,7 @@ public record EventEnvelope(
             if (eventRouting == null) {
                 throw new IllegalArgumentException("EventRouting attribute 'eventRouting' cannot be null");
             }
-            this.eventType = eventRouting.eventType();
             this.eventDispatchType = eventRouting.eventDispatchType();
-            return this;
-        }
-
-        public Builder withEventType(EventType eventType) {
-            this.eventType = eventType;
             return this;
         }
 
@@ -113,13 +109,11 @@ public record EventEnvelope(
                 );
             }
 
-            EventRouting routing = new EventRouting(
-                    eventType,
-                    eventDispatchType
-            );
+            EventRouting routing = new EventRouting(eventDispatchType);
 
             return new EventEnvelope(
                     metadata,
+                    routing,
                     payload
             );
         }

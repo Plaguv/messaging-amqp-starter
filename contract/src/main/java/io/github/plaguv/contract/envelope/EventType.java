@@ -1,8 +1,8 @@
-package io.github.plaguv.contract.envelope.routing;
+package io.github.plaguv.contract.envelope;
 
-import io.github.plaguv.contract.event.EventInstance;
-import io.github.plaguv.contract.event.StoreClosedEvent;
-import io.github.plaguv.contract.event.StoreOpenedEvent;
+import io.github.plaguv.contract.envelope.payload.EventInstance;
+import io.github.plaguv.contract.envelope.payload.StoreClosedEvent;
+import io.github.plaguv.contract.envelope.payload.StoreOpenedEvent;
 
 import java.util.Arrays;
 

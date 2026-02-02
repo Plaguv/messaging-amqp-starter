@@ -1,6 +1,6 @@
 package io.github.plaguv.messaging.listener;
 
-import io.github.plaguv.contract.envelope.routing.EventType;
+import io.github.plaguv.contract.envelope.EventType;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 import java.lang.annotation.ElementType;

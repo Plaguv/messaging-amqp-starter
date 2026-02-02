@@ -1,4 +1,4 @@
-package io.github.plaguv.contract.envelope.routing;
+package io.github.plaguv.contract.envelope;
 
 public enum EventDomain {
     STORE,

@@ -1,41 +1,55 @@
 package io.github.plaguv.contract;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
-import io.github.plaguv.contract.event.EventInstance;
+import io.github.plaguv.contract.envelope.payload.EventInstance;
 import io.github.plaguv.contract.envelope.metadata.EventMetadata;
 import io.github.plaguv.contract.envelope.metadata.EventVersion;
 import io.github.plaguv.contract.envelope.routing.EventDispatchType;
-import io.github.plaguv.contract.envelope.routing.EventType;
-import io.github.plaguv.contract.event.StoreClosedEvent;
-import io.github.plaguv.contract.event.StoreOpenedEvent;
+import io.github.plaguv.contract.envelope.payload.StoreOpenedEvent;
+import io.github.plaguv.contract.envelope.routing.EventRouting;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.util.UUID;
+
 class EventEnvelopeTest {
 
     private EventMetadata metadata;
+    private EventRouting routing;
     private EventInstance payload;
 
     @BeforeEach
     void beforeEach() {
         metadata = new EventMetadata(
+                UUID.randomUUID(),
                 new EventVersion(1),
+                Instant.now(),
                 EventEnvelopeTest.class
         );
-        payload = new StoreOpenedEvent(5L);
+
+        routing = new EventRouting(
+          EventDispatchType.FANOUT
+        );
+
+        payload = new StoreOpenedEvent(
+                5L)
+        ;
     }
 
     @Test
     @DisplayName("Should throw if null parameter in constructor")
     void throwsOnNull() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new EventEnvelope(null, null));
+                () -> new EventEnvelope(null, null, null));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new EventEnvelope(metadata, null));
+                () -> new EventEnvelope(metadata, routing, null));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new EventEnvelope(null, payload));
+                () -> new EventEnvelope(metadata, null, payload));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new EventEnvelope(null, routing, payload));
     }
 
     @Test
@@ -47,18 +61,20 @@ class EventEnvelopeTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> EventEnvelope.builder()
                         .ofMetadata(metadata)
-                        .ofMetadata(null)
+                        .ofRouting(routing)
+                        .ofPayload(null)
                         .build());
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> EventEnvelope.builder()
                         .ofMetadata(metadata)
                         .ofRouting(null)
-                        .ofMetadata(metadata)
+                        .ofPayload(payload)
                         .build());
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> EventEnvelope.builder()
                         .ofMetadata(null)
-                        .ofMetadata(metadata)
+                        .ofRouting(routing)
+                        .ofPayload(payload)
                         .build());
     }
 
@@ -67,10 +83,12 @@ class EventEnvelopeTest {
     void builderConstructsWithGivenValues() {
         EventEnvelope eventEnvelope = EventEnvelope.builder()
                 .ofMetadata(metadata)
+                .ofRouting(routing)
                 .ofPayload(payload)
                 .build();
 
         Assertions.assertEquals(metadata, eventEnvelope.metadata());
+        Assertions.assertEquals(routing, eventEnvelope.eventRouting());
         Assertions.assertEquals(payload, eventEnvelope.payload());
     }
 
@@ -81,7 +99,6 @@ class EventEnvelopeTest {
                 EventEnvelope.builder()
                         .withEventVersion(new EventVersion(1))
                         .withProducer(EventEnvelopeTest.class)
-                        .withEventType(EventType.STORE_OPENED)
                         .withEventDispatchType(EventDispatchType.DIRECT)
                         .ofPayload(payload)
                         .build());
@@ -90,20 +107,14 @@ class EventEnvelopeTest {
     @Test
     @DisplayName("Builder should construct with minimal parameters")
     void builderConstructsWithMinimalValues() {
-        metadata = new EventMetadata(
+        metadata = new EventMetadata( // As opposed to providing the full metadata, with attributes eventId and occurredAt specified
                 new EventVersion(1),
                 EventEnvelopeTest.class
         );
         Assertions.assertDoesNotThrow(() ->
                 EventEnvelope.builder()
                         .ofMetadata(metadata)
-                        .ofPayload(payload)
-                        .build());
-
-        Assertions.assertDoesNotThrow(() ->
-                EventEnvelope.builder()
-                        .withEventVersion(new EventVersion(1))
-                        .withProducer(EventEnvelopeTest.class)
+                        .ofRouting(routing)
                         .ofPayload(payload)
                         .build());
     }

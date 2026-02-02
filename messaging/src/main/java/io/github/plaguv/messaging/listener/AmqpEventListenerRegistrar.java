@@ -1,7 +1,7 @@
 package io.github.plaguv.messaging.listener;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
-import io.github.plaguv.contract.envelope.routing.EventType;
+import io.github.plaguv.contract.envelope.EventType;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import io.github.plaguv.messaging.utlity.TopologyDeclarer;
 import org.jspecify.annotations.NonNull;

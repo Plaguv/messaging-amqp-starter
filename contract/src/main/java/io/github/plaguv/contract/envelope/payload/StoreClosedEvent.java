@@ -1,4 +1,4 @@
-package io.github.plaguv.contract.event;
+package io.github.plaguv.contract.envelope.payload;
 
 public record StoreClosedEvent(
         Long storeId
