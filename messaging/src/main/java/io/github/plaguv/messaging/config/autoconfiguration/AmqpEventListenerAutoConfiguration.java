@@ -6,6 +6,7 @@ import io.github.plaguv.messaging.listener.EventListenerDiscoverer;
 import io.github.plaguv.messaging.listener.EventListenerRegistrar;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import io.github.plaguv.messaging.utlity.TopologyDeclarer;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -17,13 +18,13 @@ public class AmqpEventListenerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EventListenerDiscoverer eventListenerDiscoverer() {
-        return new AmqpEventListenerDiscoverer();
+    public EventListenerDiscoverer eventListenerDiscoverer(ListableBeanFactory listableBeanFactory) {
+        return new AmqpEventListenerDiscoverer(listableBeanFactory);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public EventListenerRegistrar eventListenerRegistrar(EventRouter eventRouter, TopologyDeclarer topologyDeclarer) {
-        return new AmqpEventListenerRegistrar(eventRouter, topologyDeclarer);
+    public EventListenerRegistrar eventListenerRegistrar(EventRouter eventRouter, EventListenerDiscoverer eventListenerDiscoverer, TopologyDeclarer topologyDeclarer) {
+        return new AmqpEventListenerRegistrar(eventRouter, eventListenerDiscoverer, topologyDeclarer);
     }
 }

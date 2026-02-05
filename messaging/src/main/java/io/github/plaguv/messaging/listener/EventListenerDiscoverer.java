@@ -7,5 +7,5 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 public interface EventListenerDiscoverer {
-    @Nonnull Map<Method, Class<? extends EventInstance>> getListenerMethods();
+    @Nonnull Map<Method, Class<? extends EventInstance>> getListeners();
 }
