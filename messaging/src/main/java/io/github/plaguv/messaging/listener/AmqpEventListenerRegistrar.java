@@ -1,6 +1,10 @@
 package io.github.plaguv.messaging.listener;
 
-import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.payload.Event;
+import io.github.plaguv.contract.envelope.payload.EventDomain;
+import io.github.plaguv.contract.envelope.payload.EventInstance;
+import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import io.github.plaguv.messaging.utlity.TopologyDeclarer;
 import jakarta.annotation.Nonnull;
@@ -16,7 +20,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Method;
 
-public class AmqpEventListenerRegistrar implements EventListenerRegistrar, RabbitListenerConfigurer, ApplicationContextAware{
+public class AmqpEventListenerRegistrar implements EventListenerRegistrar, RabbitListenerConfigurer, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(AmqpEventListenerRegistrar.class);
     private final EventRouter eventRouter;
@@ -48,14 +52,16 @@ public class AmqpEventListenerRegistrar implements EventListenerRegistrar, Rabbi
             return;
         }
 
-        // TODO: topologyDeclarer
-        // Mock
-        EventEnvelope eventEnvelope = EventEnvelope.builder()
-                .withProducer(AmqpEventListenerDiscoverer.class)
-//                .ofPayload(discoverer.getListeners().get(method))
-                .build();
+        Class<? extends EventInstance> eventClass = discoverer.getListeners().get(method);
+        EventDomain eventDomain = eventClass.getAnnotation(Event.class).domain();
 
-        String queue = eventRouter.resolveQueue(eventEnvelope);
+        EventRoutingDescriptor eventRoutingDescriptor = new EventRoutingDescriptor(
+                eventClass,
+                eventDomain,
+                EventDispatchType.FANOUT
+        );
+
+        String queue = eventRouter.resolveQueue(eventRoutingDescriptor);
 
         MethodRabbitListenerEndpoint endpoint = new MethodRabbitListenerEndpoint();
         endpoint.setBean(bean);

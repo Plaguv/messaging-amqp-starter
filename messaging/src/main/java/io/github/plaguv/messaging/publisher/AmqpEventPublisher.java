@@ -1,6 +1,8 @@
 package io.github.plaguv.messaging.publisher;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.payload.Event;
+import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.utlity.helper.ClassNameExtractor;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import jakarta.annotation.Nonnull;
@@ -32,8 +34,8 @@ public class AmqpEventPublisher implements EventPublisher {
     @Override
     public void publishMessage(@Nonnull EventEnvelope eventEnvelope) {
         try {
-            String exchange = eventRouter.resolveExchange(eventEnvelope);
-            String routingKey = eventRouter.resolveRoutingKey(eventEnvelope);
+            String exchange = eventRouter.resolveExchange(EventRoutingDescriptor.of(eventEnvelope));
+            String routingKey = eventRouter.resolveRoutingKey(EventRoutingDescriptor.of(eventEnvelope));
 
             rabbitTemplate.convertAndSend(
                     exchange,
@@ -61,7 +63,7 @@ public class AmqpEventPublisher implements EventPublisher {
         );
         props.setHeader(
                 "x-event-domain",
-                eventEnvelope.payload().getEventDomain().name().toLowerCase()
+                eventEnvelope.payload().getClass().getAnnotation(Event.class).domain().name().toLowerCase()
         );
         props.setHeader(
                 "x-event-version",

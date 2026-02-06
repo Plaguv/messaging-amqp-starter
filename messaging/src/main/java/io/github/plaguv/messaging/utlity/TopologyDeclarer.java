@@ -1,15 +1,16 @@
 package io.github.plaguv.messaging.utlity;
 
-import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import jakarta.annotation.Nonnull;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.Queue;
 
 public interface TopologyDeclarer {
 
-    void declareExchangeIfAbsent(@Nonnull EventEnvelope eventEnvelope);
+    Exchange declareExchangeIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor);
 
-    void declareQueueIfAbsent(@Nonnull EventEnvelope eventEnvelope);
+    Queue declareQueueIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor);
 
-    void declareBindingIfAbsent(@Nonnull EventEnvelope eventEnvelope);
-
-    void declareAllIfAbsent(@Nonnull EventEnvelope eventEnvelope);
+    Binding declareBindingIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor);
 }

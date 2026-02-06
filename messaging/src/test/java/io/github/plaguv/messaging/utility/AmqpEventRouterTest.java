@@ -2,6 +2,7 @@ package io.github.plaguv.messaging.utility;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
 import io.github.plaguv.contract.envelope.payload.pos.StoreOpenedEvent;
+import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.config.properties.AmqpProperties;
 import io.github.plaguv.messaging.utlity.AmqpEventRouter;
 import io.github.plaguv.messaging.utlity.EventRouter;
@@ -12,12 +13,13 @@ class AmqpEventRouterTest {
     private AmqpProperties amqpProperties;
     private EventRouter eventRouter;
     private EventEnvelope eventEnvelope;
+    private EventRoutingDescriptor eventRoutingDescriptor;
 
     @BeforeEach
     void beforeEach() {
         amqpProperties = new AmqpProperties(
                 "integrationsprojekt",
-                "starter"
+                "kasse"
         );
         eventRouter = new AmqpEventRouter(
                 amqpProperties
@@ -26,6 +28,7 @@ class AmqpEventRouterTest {
                 .withProducer(AmqpEventRouter.class)
                 .ofPayload(new StoreOpenedEvent(5L))
                 .build();
+        eventRoutingDescriptor = EventRoutingDescriptor.of(eventEnvelope);
     }
 
     @Test

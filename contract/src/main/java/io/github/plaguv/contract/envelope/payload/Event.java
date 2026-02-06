@@ -1,0 +1,10 @@
+package io.github.plaguv.contract.envelope.payload;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Event {
+    EventDomain domain();
+}

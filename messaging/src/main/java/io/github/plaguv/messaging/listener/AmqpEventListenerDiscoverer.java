@@ -1,5 +1,6 @@
 package io.github.plaguv.messaging.listener;
 
+import io.github.plaguv.contract.envelope.payload.Event;
 import io.github.plaguv.contract.envelope.payload.EventInstance;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,15 +48,24 @@ public class AmqpEventListenerDiscoverer implements EventListenerDiscoverer, Sma
                 continue;
             }
 
-            Class<?> paramType = method.getParameterTypes()[0];
+            Parameter parameter = method.getParameters()[0];
+            Class<?> parameterType = method.getParameterTypes()[0];
 
-            if (!EventInstance.class.isAssignableFrom(paramType)) {
-                log.warn("Method '{}' in bean '{}' was annotated with @AmqpListener but its parameter '{}' does not extend EventInstance.",
-                        method, bean, method.getParameters()[0]);
+            if (!EventInstance.class.isAssignableFrom(parameterType)) {
+                log.warn("Method '{}' in bean '{}' was annotated with '@AmqpListener' but its parameter '{}' does not extend EventInstance.",
+                        method, bean, parameter);
                 continue;
             }
 
-            listeners.putIfAbsent(method, paramType.asSubclass(EventInstance.class));
+            Class<?> declaringClass = method.getDeclaringClass();
+
+            if (!declaringClass.isAnnotationPresent(Event.class)) {
+                log.warn("Method '{}' in bean '{}' was annotated with '@AmqpListener' but its parameter '{}' does not define an '@EventDomain' in its class '{}'.",
+                        method, bean, parameter, declaringClass);
+                 continue;
+            }
+
+            listeners.putIfAbsent(method, parameterType.asSubclass(EventInstance.class));
         }
     }
 

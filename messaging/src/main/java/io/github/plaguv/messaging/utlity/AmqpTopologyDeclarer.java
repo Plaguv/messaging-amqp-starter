@@ -1,8 +1,7 @@
 package io.github.plaguv.messaging.utlity;
 
-import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import jakarta.annotation.Nonnull;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
@@ -28,47 +27,47 @@ public class AmqpTopologyDeclarer implements TopologyDeclarer {
     }
 
     @Override
-    public void declareExchangeIfAbsent(@Nonnull EventEnvelope eventEnvelope) {
-        String exchangeName = eventRouter.resolveExchange(eventEnvelope);
-
-        declaredExchanges.computeIfAbsent(exchangeName, name -> {
-            Exchange exchange = switch (eventEnvelope.routing().eventDispatchType()) {
+    public Exchange declareExchangeIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor) {
+        String exchangeName = eventRouter.resolveExchange(eventRoutingDescriptor);
+        return declaredExchanges.computeIfAbsent(exchangeName, name -> {
+            Exchange exchange = switch (eventRoutingDescriptor.dispatchType()) {
                 case DIRECT -> new DirectExchange(name, true, false);
                 case TOPIC -> new TopicExchange(name, true, false);
                 case FANOUT -> new FanoutExchange(name, true, false);
             };
 
             rabbitAdmin.declareExchange(exchange);
-            log.info("Declared centralExchange '{}'", name);
+            log.atInfo().log("Declared centralExchange '{}'", name);
+
             return exchange;
         });
     }
 
     @Override
-    public void declareQueueIfAbsent(@Nonnull EventEnvelope eventEnvelope) {
-        String queueName = eventRouter.resolveQueue(eventEnvelope);
+    public Queue declareQueueIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor) {
+        String queueName = eventRouter.resolveQueue(eventRoutingDescriptor);
 
-        declaredQueues.computeIfAbsent(queueName, name -> {
+        return declaredQueues.computeIfAbsent(queueName, name -> {
             Queue queue = new Queue(name, true, false, false);
 
             rabbitAdmin.declareQueue(queue);
-            log.info("Declared queue '{}'", name);
+            log.atInfo().log("Declared queue '{}'", name);
 
             return queue;
         });
     }
 
     @Override
-    public void declareBindingIfAbsent(@Nonnull EventEnvelope eventEnvelope) {
-        String bindingKey = eventRouter.resolveBinding(eventEnvelope);
-        String exchangeName = eventRouter.resolveExchange(eventEnvelope);
-        String queueName = eventRouter.resolveQueue(eventEnvelope);
+    public Binding declareBindingIfAbsent(@Nonnull EventRoutingDescriptor eventRoutingDescriptor) {
+        String bindingKey = eventRouter.resolveBinding(eventRoutingDescriptor);
+        String exchangeName = eventRouter.resolveExchange(eventRoutingDescriptor);
+        String queueName = eventRouter.resolveQueue(eventRoutingDescriptor);
 
         // Ensure required topology exists
-        declareExchangeIfAbsent(eventEnvelope);
-        declareQueueIfAbsent(eventEnvelope);
+        declareExchangeIfAbsent(eventRoutingDescriptor);
+        declareQueueIfAbsent(eventRoutingDescriptor);
 
-        declaredBindings.computeIfAbsent(bindingKey, key -> {
+        return declaredBindings.computeIfAbsent(bindingKey, key -> {
             Queue queue = declaredQueues.get(queueName);
             Exchange exchange = declaredExchanges.get(exchangeName);
             Binding binding = switch (exchange.getType()) {
@@ -85,16 +84,9 @@ public class AmqpTopologyDeclarer implements TopologyDeclarer {
             };
 
             rabbitAdmin.declareBinding(binding);
-            log.info("Declared binding '{}' for centralExchange '{}' -> queue '{}'", key, exchangeName, queueName);
+            log.atInfo().log("Declared binding '{}' for centralExchange '{}' -> queue '{}'", key, exchangeName, queueName);
 
             return binding;
         });
-    }
-
-    @Override
-    public void declareAllIfAbsent(@NonNull EventEnvelope eventEnvelope) {
-        declareExchangeIfAbsent(eventEnvelope);
-        declareQueueIfAbsent(eventEnvelope);
-        declareBindingIfAbsent(eventEnvelope);
     }
 }
