@@ -9,16 +9,16 @@
     </parent>
 
     <groupId>io.github.plaguv</groupId>
-    <artifactId>messaging-amqp-starter</artifactId>
+    <artifactId>messaging-amqp-spring-boot-starter</artifactId>
     <version>1.0.0-alpha-1</version>
     <packaging>pom</packaging>
 
-    <name>Messaging AMQP Starter</name>
+    <name>Messaging AMQP Spring Boot Starter</name>
     <description>
         A Module designed to serve as a messaging starter for Spring Boots AMQP.
         The starter autoconfigures and sets up default beans related to AMQP messaging services.
     </description>
-    <url>https://github.com/plaguv/messaging-amqp-starter</url>
+    <url>https://github.com/plaguv/messaging-amqp-spring-boot-starter</url>
 
     <modules>
         <module>contract</module>
@@ -33,9 +33,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/plaguv/messaging-amqp-starter.git</connection>
-        <developerConnection>scm:git:ssh://github.com/plaguv/messaging-amqp-starter.git</developerConnection>
-        <url>https://github.com/plaguv/messaging-amqp-starter</url>
+        <connection>scm:git:https://github.com/plaguv/messaging-amqp-spring-boot-starter.git</connection>
+        <developerConnection>scm:git:ssh://github.com/plaguv/messaging-amqp-spring-boot-starter.git</developerConnection>
+        <url>https://github.com/plaguv/messaging-amqp-spring-boot-starter</url>
     </scm>
 
     <developers>

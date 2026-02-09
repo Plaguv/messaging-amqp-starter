@@ -7,4 +7,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface Event {
     EventDomain domain();
+    String version() default "1.0.0";
 }

@@ -3,44 +3,52 @@ package io.github.plaguv.contract.envelope.metadata;
 import jakarta.annotation.Nonnull;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public record EventMetadata(
         UUID eventId,
-        EventVersion eventVersion,
         Instant occurredAt,
-        Class<?> producer
+        Optional<Class<?>> producer
 ) {
     public EventMetadata {
         if (eventId == null) {
             throw new IllegalArgumentException("EventMetadata attribute 'eventId' cannot be null");
         }
-        if (eventVersion == null) {
-            throw new IllegalArgumentException("EventMetadata attribute 'eventVersion' cannot be null");
-        }
         if (occurredAt == null) {
             throw new IllegalArgumentException("EventMetadata attribute 'occurredAt' cannot be null");
         }
-        if (producer == null) {
-            throw new IllegalArgumentException("EventMetadata attribute 'producer' cannot be null");
-        }
     }
 
-    public EventMetadata(EventVersion eventVersion, Class<?> producer) {
+    public EventMetadata(UUID eventId, Instant occurredAt, Class<?> producer) {
         this(
-                UUID.randomUUID(),
-                eventVersion,
-                Instant.now(),
-                producer
+                eventId,
+                occurredAt,
+                Optional.of(producer)
+        );
+    }
+
+    public EventMetadata(UUID eventId, Instant occurredAt, Object producer) {
+        this(
+                eventId,
+                occurredAt,
+                producer == null ? Optional.empty() : Optional.of(producer.getClass())
         );
     }
 
     public EventMetadata(Class<?> producer) {
         this(
                 UUID.randomUUID(),
-                EventVersion.valueOf(1),
                 Instant.now(),
-                producer
+                Optional.of(producer)
+        );
+    }
+
+    public static EventMetadata now() {
+        return new EventMetadata(
+                UUID.randomUUID(),
+                Instant.now(),
+                Optional.empty()
         );
     }
 
@@ -48,7 +56,6 @@ public record EventMetadata(
     public @Nonnull String toString() {
         return "EventMetadata{" +
                 "eventId=" + eventId +
-                ", eventVersion=" + eventVersion +
                 ", occurredAt=" + occurredAt +
                 ", producer=" + producer +
                 '}';

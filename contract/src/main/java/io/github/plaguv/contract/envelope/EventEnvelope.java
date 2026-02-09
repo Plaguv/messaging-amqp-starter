@@ -1,19 +1,19 @@
 package io.github.plaguv.contract.envelope;
 
-import io.github.plaguv.contract.envelope.payload.EventInstance;
+import io.github.plaguv.contract.envelope.payload.Event;
 import io.github.plaguv.contract.envelope.metadata.EventMetadata;
-import io.github.plaguv.contract.envelope.metadata.EventVersion;
-import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventScope;
 import io.github.plaguv.contract.envelope.routing.EventRouting;
 import jakarta.annotation.Nonnull;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public record EventEnvelope(
         EventMetadata metadata,
         EventRouting routing,
-        EventInstance payload
+        Object payload
 ) {
     public EventEnvelope {
         if (metadata == null) {
@@ -25,6 +25,9 @@ public record EventEnvelope(
         if (payload == null) {
             throw new IllegalArgumentException("EventEnvelope attribute 'payload' cannot be null");
         }
+        if (!payload.getClass().isAnnotationPresent(Event.class)) {
+            throw new IllegalArgumentException("EventEnvelope attribute 'payload' must be annotated with @Event");
+        }
     }
 
     public static Builder builder() {
@@ -35,23 +38,22 @@ public record EventEnvelope(
 
         // Default values
         private UUID eventId = UUID.randomUUID();
-        private EventVersion eventVersion = EventVersion.valueOf(1);
         private Instant occurredAt = Instant.now();
-        private Class<?> producer;
+        private Object producer;
 
-        private EventDispatchType eventDispatchType = EventDispatchType.FANOUT;
+        private EventScope eventScope = EventScope.BROADCAST;
         private String eventWildcard = "";
 
-        private EventInstance payload;
+        private Object payload;
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder ofMetadata(EventMetadata metadata) {
             if (metadata == null) {
                 throw new IllegalArgumentException("EventMetadata attribute 'metadata' cannot be null");
             }
             this.eventId = metadata.eventId();
-            this.eventVersion = metadata.eventVersion();
             this.occurredAt = metadata.occurredAt();
             this.producer = metadata.producer();
             return this;
@@ -59,11 +61,6 @@ public record EventEnvelope(
 
         public Builder withEventId(UUID eventId) {
             this.eventId = eventId;
-            return this;
-        }
-
-        public Builder withEventVersion(EventVersion eventVersion) {
-            this.eventVersion = eventVersion;
             return this;
         }
 
@@ -81,13 +78,13 @@ public record EventEnvelope(
             if (eventRouting == null) {
                 throw new IllegalArgumentException("EventRouting attribute 'routing' cannot be null");
             }
-            this.eventDispatchType = eventRouting.eventDispatchType();
+            this.eventScope = eventRouting.eventScope();
             this.eventWildcard = eventRouting.eventWildcard();
             return this;
         }
 
-        public Builder withEventDispatchType(EventDispatchType eventDispatchType) {
-            this.eventDispatchType = eventDispatchType;
+        public Builder withEventDispatchType(EventScope eventScope) {
+            this.eventScope = eventScope;
             return this;
         }
 
@@ -96,7 +93,7 @@ public record EventEnvelope(
             return this;
         }
 
-        public Builder ofPayload(EventInstance payload) {
+        public Builder ofPayload(Object payload) {
             this.payload = payload;
             return this;
         }
@@ -104,13 +101,12 @@ public record EventEnvelope(
         public EventEnvelope build() {
             EventMetadata metadata = new EventMetadata(
                     eventId,
-                    eventVersion,
                     occurredAt,
                     producer
             );
 
             EventRouting routing = new EventRouting(
-                    eventDispatchType,
+                    eventScope,
                     eventWildcard
             );
 

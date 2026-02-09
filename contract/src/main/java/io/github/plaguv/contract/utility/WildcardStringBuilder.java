@@ -2,7 +2,7 @@ package io.github.plaguv.contract.utility;
 
 import io.github.plaguv.contract.envelope.payload.EventDomain;
 import io.github.plaguv.contract.envelope.payload.EventInstance;
-import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventScope;
 
 public final class WildcardStringBuilder {
 
@@ -28,7 +28,7 @@ public final class WildcardStringBuilder {
             return this;
         }
 
-        public Builder withScope(EventDispatchType eventDispatchType) {
+        public Builder withScope(EventScope eventScope) {
             return this;
         }
 

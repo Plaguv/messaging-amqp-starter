@@ -2,7 +2,7 @@
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/Rabbitmq-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 
-## 📦 Messaging AMQP Starter
+## 📦 Messaging AMQP Spring Boot Starter
 
 This project provides a standardized, opinionated messaging template built on RabbitMQ for internal event-driven
 communication.
@@ -49,7 +49,6 @@ At minimum, each application defines its logical exchange namespace:
 
 ````yaml
 amqp:
-  central_exchange: central
   central_application: application # or ${spring.application.name}
 ````
 
@@ -57,8 +56,9 @@ This namespace is used to derive exchanges, queues, and bindings consistently ac
 
 ## 📦 Installation
 
-Simply add the dependency using your preferred build tool (Maven or Gradle).
+Simply add the dependency using your preferred build.
 
+Maven:
 ````maven
 <dependencies>
     <dependency>
@@ -69,6 +69,7 @@ Simply add the dependency using your preferred build tool (Maven or Gradle).
 </dependencies>
 ````
 
+Gradle:
 ````gradle
 dependencies {
     implementation 'io.github.plaguv:messaging-amqp-starter:1.0.0-alpha-1'
@@ -78,6 +79,30 @@ dependencies {
 ## 🚀 Examples
 
 To demonstrate the ease of use, here are some common use cases integrated into an everyday java project:
+
+### ✉️ Defining an event
+An event recognized by the starter is easy to setup. Simply create a class and append the `@Event` annotation.
+
+
+The Annotation generally only requires the events domain. The events version (if ommited) will start at `1.0.0`. 
+The versioning can also be written as `1_0_0` or `1-0-0`'
+
+Everything else can be freely stylized, such as validation. Do make sure that your class is compatible with `jackson-databind` 3+ serialization.
+Otherwise, the message cannot be sent.
+
+`````java
+@Event(domain = EventDomain.STORE, version = "1.0.0") // Mandatory annotation 
+public record StoreOpenedEvent(
+        long storeId // Events Attributes
+) {
+
+    public StoreOpenedEvent {
+        if (storeId < 1) { // Optional validation
+            throw new IllegalArgumentException("StoreOpenedEvents attribute 'storeId' cannot be < 1");
+        }
+    }
+}
+`````
 
 ### 📤 Publishing an event
 
@@ -90,12 +115,18 @@ The starter automatically infers:
 - message headers and encoding
 
 It also handles serialization and error logging. 
-At minimum, each EventEnvelope builder requires a producer and a payload.
+At minimum, each EventEnvelope builder requires a producer and a payload. 
+Payloads can be any object that have the `@Event` annotation.
 
 ````java
 EventInstance eventInstance = new StoreOpenedEvent(5L);
 EventEnvelope envelope = EventEnvelope.builder()
-        .withProducer(StoreService.class)
+//        .ofMetadata()
+//        .withEventId()
+//        .withOccuredAt()
+//        .withProducer()
+//        .ofEventRouting()
+//        .withScope()
         .ofPayload(eventInstance)
         .build();
 
@@ -106,6 +137,8 @@ eventPublisher.publishMessage(envelope);
 ### 📤 Listening to an event
 
 All required AMQP topology is derived and declared automatically.
+Do note that the listener infers your listening intent from the methods' parameter. 
+In this case `StoreOpenedEvent`. The parameter has to implement the aforementioned `@Event` annotation.
 
 ````java
 

@@ -3,7 +3,7 @@ package io.github.plaguv.messaging.listener;
 import io.github.plaguv.contract.envelope.payload.Event;
 import io.github.plaguv.contract.envelope.payload.EventDomain;
 import io.github.plaguv.contract.envelope.payload.EventInstance;
-import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventScope;
 import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import io.github.plaguv.messaging.utlity.TopologyDeclarer;
@@ -58,7 +58,7 @@ public class AmqpEventListenerRegistrar implements EventListenerRegistrar, Rabbi
         EventRoutingDescriptor eventRoutingDescriptor = new EventRoutingDescriptor(
                 eventClass,
                 eventDomain,
-                EventDispatchType.FANOUT
+                EventScope.BROADCAST
         );
 
         String queue = eventRouter.resolveQueue(eventRoutingDescriptor);

@@ -4,7 +4,7 @@ import io.github.plaguv.contract.envelope.EventEnvelope;
 import io.github.plaguv.contract.envelope.payload.EventInstance;
 import io.github.plaguv.contract.envelope.metadata.EventMetadata;
 import io.github.plaguv.contract.envelope.metadata.EventVersion;
-import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventScope;
 import io.github.plaguv.contract.envelope.payload.pos.StoreOpenedEvent;
 import io.github.plaguv.contract.envelope.routing.EventRouting;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +31,7 @@ class EventEnvelopeTest {
         );
 
         routing = new EventRouting(
-          EventDispatchType.FANOUT
+          EventScope.BROADCAST
         );
 
         payload = new StoreOpenedEvent(
@@ -99,7 +99,7 @@ class EventEnvelopeTest {
                 EventEnvelope.builder()
                         .withEventVersion(new EventVersion(1))
                         .withProducer(EventEnvelopeTest.class)
-                        .withEventDispatchType(EventDispatchType.DIRECT)
+                        .withEventDispatchType(EventScope.TARGET)
                         .ofPayload(payload)
                         .build());
     }

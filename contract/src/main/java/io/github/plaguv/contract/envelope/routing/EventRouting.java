@@ -3,11 +3,11 @@ package io.github.plaguv.contract.envelope.routing;
 import jakarta.annotation.Nonnull;
 
 public record EventRouting(
-   EventDispatchType eventDispatchType,
+   EventScope eventScope,
    String eventWildcard
 ) {
     public EventRouting {
-        if (eventDispatchType == null) {
+        if (eventScope == null) {
             throw new IllegalArgumentException("EventRouting attribute 'eventDispatchType' cannot be null");
         }
         if (eventWildcard == null) {
@@ -15,22 +15,22 @@ public record EventRouting(
         }
     }
 
-    public EventRouting(EventDispatchType eventDispatchType) {
-        this(eventDispatchType, "");
+    public EventRouting(EventScope eventScope) {
+        this(eventScope, "");
     }
 
-    public static EventRouting valueOf(EventDispatchType eventDispatchType) {
-        return new EventRouting(eventDispatchType, null);
+    public static EventRouting valueOf(EventScope eventScope) {
+        return new EventRouting(eventScope, null);
     }
 
-    public static EventRouting valueOf(EventDispatchType eventDispatchType, String wildcard) {
-        return new EventRouting(eventDispatchType, wildcard);
+    public static EventRouting valueOf(EventScope eventScope, String wildcard) {
+        return new EventRouting(eventScope, wildcard);
     }
 
     @Override
     public @Nonnull String toString() {
         return "EventRouting{" +
-                "eventDispatchType=" + eventDispatchType +
+                "eventDispatchType=" + eventScope +
                 ", eventWildcard='" + eventWildcard + '\'' +
                 '}';
     }

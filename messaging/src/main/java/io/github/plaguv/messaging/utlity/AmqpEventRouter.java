@@ -1,6 +1,6 @@
 package io.github.plaguv.messaging.utlity;
 
-import io.github.plaguv.contract.envelope.routing.EventDispatchType;
+import io.github.plaguv.contract.envelope.routing.EventScope;
 import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.config.properties.AmqpProperties;
 import io.github.plaguv.messaging.utlity.helper.ClassNameExtractor;
@@ -36,7 +36,7 @@ public class AmqpEventRouter implements EventRouter {
 
     @Override
     public @Nonnull String resolveRoutingKey(@Nonnull EventRoutingDescriptor eventRoutingDescriptor) {
-        if (eventRoutingDescriptor.dispatchType() == EventDispatchType.TOPIC && eventRoutingDescriptor.wildcard().isPresent()) {
+        if (eventRoutingDescriptor.dispatchType() == EventScope.GROUP && eventRoutingDescriptor.wildcard().isPresent()) {
             return eventRoutingDescriptor.wildcard().get();
         } else {
             return "%s.%s.%s".formatted(

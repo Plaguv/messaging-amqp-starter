@@ -3,14 +3,13 @@ package io.github.plaguv.contract.envelope.routing;
 import io.github.plaguv.contract.envelope.EventEnvelope;
 import io.github.plaguv.contract.envelope.payload.Event;
 import io.github.plaguv.contract.envelope.payload.EventDomain;
-import io.github.plaguv.contract.envelope.payload.EventInstance;
 
 import java.util.Optional;
 
 public record EventRoutingDescriptor(
-        Class<? extends EventInstance> type,
+        Class<?> type,
         EventDomain domain,
-        EventDispatchType dispatchType,
+        EventScope dispatchType,
         Optional<String> wildcard
 ) {
     public EventRoutingDescriptor {
@@ -28,7 +27,7 @@ public record EventRoutingDescriptor(
         }
     }
 
-    public EventRoutingDescriptor(Class<? extends EventInstance> type, EventDomain domain, EventDispatchType dispatchType) {
+    public EventRoutingDescriptor(Class<?> type, EventDomain domain, EventScope dispatchType) {
         this(type, domain, dispatchType, Optional.empty());
     }
 
@@ -40,7 +39,7 @@ public record EventRoutingDescriptor(
         return new EventRoutingDescriptor(
                 eventEnvelope.payload().getClass(),
                 eventEnvelope.payload().getClass().getAnnotation(Event.class).domain(),
-                eventEnvelope.routing().eventDispatchType()
+                eventEnvelope.routing().eventScope()
         );
     }
 }

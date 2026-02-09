@@ -23,23 +23,23 @@ class EventRoutingTest {
     @DisplayName("Constructor should keep field values")
     void constructorKeepsParameters() {
         String wildcard = "topic";
-        EventDispatchType eventDispatchType = EventDispatchType.FANOUT;
+        EventScope eventScope = EventScope.BROADCAST;
         EventRouting eventRouting;
 
-        eventRouting = new EventRouting(eventDispatchType, wildcard);
-        Assertions.assertEquals(eventDispatchType, eventRouting.eventDispatchType());
+        eventRouting = new EventRouting(eventScope, wildcard);
+        Assertions.assertEquals(eventScope, eventRouting.eventScope());
         Assertions.assertEquals(wildcard, eventRouting.eventWildcard());
 
-        eventRouting = new EventRouting(eventDispatchType);
-        Assertions.assertEquals(eventDispatchType, eventRouting.eventDispatchType());
+        eventRouting = new EventRouting(eventScope);
+        Assertions.assertEquals(eventScope, eventRouting.eventScope());
         Assertions.assertNotEquals(wildcard, eventRouting.eventWildcard());
 
-        eventRouting = EventRouting.valueOf(eventDispatchType, wildcard);
-        Assertions.assertEquals(eventDispatchType, eventRouting.eventDispatchType());
+        eventRouting = EventRouting.valueOf(eventScope, wildcard);
+        Assertions.assertEquals(eventScope, eventRouting.eventScope());
         Assertions.assertEquals(wildcard, eventRouting.eventWildcard());
 
-        eventRouting = EventRouting.valueOf(eventDispatchType);
-        Assertions.assertEquals(eventDispatchType, eventRouting.eventDispatchType());
+        eventRouting = EventRouting.valueOf(eventScope);
+        Assertions.assertEquals(eventScope, eventRouting.eventScope());
         Assertions.assertNotEquals(wildcard, eventRouting.eventWildcard());
     }
 }

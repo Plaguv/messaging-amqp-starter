@@ -1,17 +1,19 @@
 package io.github.plaguv.messaging.publisher;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.metadata.EventVersion;
 import io.github.plaguv.contract.envelope.payload.Event;
+import io.github.plaguv.contract.envelope.payload.EventDomain;
 import io.github.plaguv.contract.envelope.routing.EventRoutingDescriptor;
 import io.github.plaguv.messaging.utlity.helper.ClassNameExtractor;
 import io.github.plaguv.messaging.utlity.EventRouter;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.aop.support.AopUtils;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -34,25 +36,22 @@ public class AmqpEventPublisher implements EventPublisher {
     @Override
     public void publishMessage(@Nonnull EventEnvelope eventEnvelope) {
         try {
-            String exchange = eventRouter.resolveExchange(EventRoutingDescriptor.of(eventEnvelope));
-            String routingKey = eventRouter.resolveRoutingKey(EventRoutingDescriptor.of(eventEnvelope));
-
             rabbitTemplate.convertAndSend(
-                    exchange,
-                    routingKey,
+                    eventRouter.resolveExchange(EventRoutingDescriptor.of(eventEnvelope)),
+                    eventRouter.resolveRoutingKey(EventRoutingDescriptor.of(eventEnvelope)),
                     buildMessage(eventEnvelope)
             );
-        } catch (AmqpException e) {
+        } catch (Exception e) {
             log.atError().log("Failed to send AMQP message", e);
         }
     }
 
-    private Message buildMessage(@Nonnull EventEnvelope eventEnvelope) {
+    private Message buildMessage(EventEnvelope eventEnvelope) {
         // Header
         MessageProperties props = new MessageProperties();
         // Mandatory Header Content
         props.setContentType(MessageProperties.CONTENT_TYPE_JSON);
-        props.setContentEncoding("utf-8" );
+        props.setContentEncoding("utf-8");
         props.setMessageId(eventEnvelope.metadata().eventId().toString());
         props.setCorrelationId(eventEnvelope.metadata().eventId().toString());
         props.setTimestamp(Date.from(eventEnvelope.metadata().occurredAt()));
@@ -67,11 +66,13 @@ public class AmqpEventPublisher implements EventPublisher {
         );
         props.setHeader(
                 "x-event-version",
-                eventEnvelope.metadata().eventVersion().toString()
+                eventEnvelope.payload().getClass().getAnnotation(Event.class).version()
         );
         props.setHeader(
                 "x-producer",
-                ClassNameExtractor.extractUpperLower(eventEnvelope.metadata().producer())
+                eventEnvelope.metadata().producer().isPresent() ?
+                        ClassNameExtractor.extractUpperLower(eventEnvelope.metadata().producer().get()) :
+                        ClassNameExtractor.extractUpperLower(AopUtils.getTargetClass(this))
         );
         try {
             return new Message(
