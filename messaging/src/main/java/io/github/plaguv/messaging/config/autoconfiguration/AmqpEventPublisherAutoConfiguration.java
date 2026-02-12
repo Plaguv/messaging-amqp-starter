@@ -17,8 +17,6 @@ public class AmqpEventPublisherAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(AmqpEventPublisherAutoConfiguration.class);
 
-    public AmqpEventPublisherAutoConfiguration() {}
-
     @Bean
     @ConditionalOnMissingBean
     public EventPublisher eventPublisher(RabbitTemplate rabbitTemplate, EventRouter eventRouter, ObjectMapper objectMapper) {

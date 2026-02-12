@@ -23,10 +23,10 @@ All components are exposed via interfaces, and the starter is fully auto-configu
    Defines the canonical messaging contracts shared across services:
 
     - All events and their payloads
-    - The canonical container for messages: EventEnvelope, which includes:
-        - EventMetadata
-        - EventRouting
-        - EventPayload
+    - The canonical container for messages: ``EventEnvelope``, which includes:
+        - ``EventMetadata``
+        - ``EventRouting``
+        - ``EventPayload``
 
    This ensures consistent message structure across all services.
 
@@ -36,7 +36,7 @@ All components are exposed via interfaces, and the starter is fully auto-configu
 
 - ``AutoConfiguration`` and properties for all messaging components
 - ``EventRouter`` for deterministic routing based on EventEnvelope
-- ``ListenerDiscoverer`` and TopologyDeclarer for automatic queue/exchange/binding setup
+- ``ListenerDiscoverer`` and ``TopologyDeclarer`` for automatic queue/exchange/binding setup
 - ``EventEnvelope`` publisher component
 
 ## ⚙️ Configuration

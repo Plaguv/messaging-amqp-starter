@@ -1,6 +1,7 @@
 package io.github.plaguv.messaging.listener.topology;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.EventEnvelopeBuilder;
 import io.github.plaguv.contract.envelope.payload.EventPayload;
 import io.github.plaguv.messaging.config.properties.AmqpProperties;
 import io.github.plaguv.messaging.utlity.EventRouter;
@@ -28,7 +29,7 @@ public class AmqpEventListenerTopology implements EventListenerTopology {
         Declarables declarables = new Declarables();
 
         for (Listener listener : listeners) {
-            EventEnvelope envelope = EventEnvelope.builderWithDefaults()
+            EventEnvelope envelope = EventEnvelopeBuilder.defaults()
                     .ofEventPayload(EventPayload.empty(listener.parameter().getType()))
                     .build();
 

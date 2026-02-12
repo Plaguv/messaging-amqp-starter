@@ -2,6 +2,7 @@ package io.github.plaguv.messaging.utlity.converter;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.MessageConversionException;
@@ -17,7 +18,8 @@ public class EventEnvelopeAmqpConverter implements MessageConverter {
     }
 
     @Override
-    public Message toMessage(@NonNull Object object, @NonNull MessageProperties messageProperties) throws MessageConversionException {
+    @NullMarked
+    public Message toMessage(Object object, MessageProperties messageProperties) throws MessageConversionException {
         try {
             byte[] body = objectMapper.writeValueAsBytes(object);
             return new Message(body, messageProperties);
@@ -27,10 +29,10 @@ public class EventEnvelopeAmqpConverter implements MessageConverter {
     }
 
     @Override
-    public Object fromMessage(@NonNull Message message) throws MessageConversionException {
+    @NullMarked
+    public Object fromMessage(Message message) throws MessageConversionException {
         try {
-            EventEnvelope envelope = objectMapper.readValue(message.getBody(), EventEnvelope.class);
-            return envelope.payload().content();
+            return objectMapper.readValue(message.getBody(), EventEnvelope.class);
         } catch (Exception e) {
             throw new MessageConversionException("Failed to convert EventEnvelope", e);
         }

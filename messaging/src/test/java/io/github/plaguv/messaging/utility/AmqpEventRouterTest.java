@@ -1,6 +1,7 @@
 package io.github.plaguv.messaging.utility;
 
 import io.github.plaguv.contract.envelope.EventEnvelope;
+import io.github.plaguv.contract.envelope.EventEnvelopeBuilder;
 import io.github.plaguv.contract.envelope.payload.EventPayload;
 import io.github.plaguv.contract.event.pos.StoreOpenedEvent;
 import io.github.plaguv.contract.envelope.routing.EventScope;
@@ -33,7 +34,7 @@ class AmqpEventRouterTest {
 
         storeOpenedEvent = new StoreOpenedEvent(5L);
 
-        eventEnvelope = EventEnvelope.builderWithDefaults()
+        eventEnvelope = EventEnvelopeBuilder.defaults()
                 .ofEventPayload(EventPayload.valueOf(storeOpenedEvent))
                 .build();
     }
@@ -59,7 +60,7 @@ class AmqpEventRouterTest {
     @Test
     @DisplayName("Should resolve the routing key based on the event envelope")
     void resolveRoutingKeyWith() {
-        eventEnvelope = EventEnvelope.builderWithDefaults()
+        eventEnvelope = EventEnvelopeBuilder.defaults()
                 .ofEventPayload(EventPayload.valueOf(storeOpenedEvent))
                 .build();
         Assertions.assertEquals(
@@ -67,7 +68,7 @@ class AmqpEventRouterTest {
                 eventRouter.resolveRoutingKey(eventEnvelope)
         );
 
-        eventEnvelope = EventEnvelope.builderWithDefaults()
+        eventEnvelope = EventEnvelopeBuilder.defaults()
                 .withScope(EventScope.GROUP)
                 .withWildcard("cashier")
                 .ofEventPayload(EventPayload.valueOf(storeOpenedEvent))
@@ -77,7 +78,7 @@ class AmqpEventRouterTest {
                 eventRouter.resolveRoutingKey(eventEnvelope)
         );
 
-        eventEnvelope = EventEnvelope.builderWithDefaults()
+        eventEnvelope = EventEnvelopeBuilder.defaults()
                 .withScope(EventScope.TARGET)
                 .withWildcard("cashier")
                 .ofEventPayload(EventPayload.valueOf(storeOpenedEvent))
@@ -91,7 +92,7 @@ class AmqpEventRouterTest {
     @Test
     @DisplayName("Should resolve the binding keys based on the event envelope")
     void resolveBindingKey() {
-        eventEnvelope = EventEnvelope.builderWithDefaults()
+        eventEnvelope = EventEnvelopeBuilder.defaults()
                 .withWildcard("starter")
                 .ofEventPayload(EventPayload.valueOf(storeOpenedEvent))
                 .build();

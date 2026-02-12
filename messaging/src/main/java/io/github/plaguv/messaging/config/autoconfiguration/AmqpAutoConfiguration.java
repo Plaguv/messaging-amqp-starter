@@ -18,8 +18,6 @@ import tools.jackson.databind.json.JsonMapper;
 @EnableRabbit
 public class AmqpAutoConfiguration {
 
-    public AmqpAutoConfiguration() {}
-
     @Bean
     @ConditionalOnMissingBean
     public ObjectMapper objectMapper() {
