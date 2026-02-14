@@ -19,6 +19,27 @@
         AMQP messaging built on RabbitMQ.
     </description>
 
+    <licenses>
+        <license>
+            <name>${license.name}</name>
+            <url>${license.url}</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>${scm.connection}</connection>
+        <developerConnection>${scm.developerConnection}</developerConnection>
+        <url>${scm.url}</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>${developer.name}</id>
+            <name>${developer.name}</name>
+            <url>${developer.url}</url>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>io.github.plaguv</groupId>

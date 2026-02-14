@@ -13,36 +13,49 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>Plaguv AMQP Parent</name>
-    <description>
-        Parent POM for the Plaguv AMQP project.
-        Provides dependency management, plugin configuration, and module aggregation.
-    </description>
-
     <modules>
         <module>plaguv-amqp-contract</module>
         <module>plaguv-amqp-core</module>
         <module>plaguv-amqp-spring-boot-starter</module>
     </modules>
 
+    <name>Plaguv AMQP Parent</name>
+    <description>
+        Parent POM for the Plaguv AMQP project.
+        Provides dependency management, plugin configuration, and module aggregation.
+    </description>
+
+    <properties>
+        <license.name>Apache License 2.0</license.name>
+        <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
+
+        <scm.connection>scm:git:https://github.com/plaguv/plaguv-amqp-spring-boot-starter.git</scm.connection>
+        <scm.developerConnection>scm:git:ssh://github.com/plaguv/plaguv-amqp-spring-boot-starter.git
+        </scm.developerConnection>
+        <scm.url>https://github.com/plaguv/plaguv-amqp-spring-boot-starter</scm.url>
+
+        <developer.name>plaguv</developer.name>
+        <developer.url>https://github.com/plaguv</developer.url>
+    </properties>
+
     <licenses>
         <license>
-            <name>Apache License 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>${license.name}</name>
+            <url>${license.url}</url>
         </license>
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/plaguv/messaging-amqp-spring-boot-starter.git</connection>
-        <developerConnection>scm:git:ssh://github.com/plaguv/messaging-amqp-spring-boot-starter.git</developerConnection>
-        <url>https://github.com/plaguv/messaging-amqp-spring-boot-starter</url>
+        <connection>${scm.connection}</connection>
+        <developerConnection>${scm.developerConnection}</developerConnection>
+        <url>${scm.url}</url>
     </scm>
 
     <developers>
         <developer>
-            <id>plaguv</id>
-            <name>plaguv</name>
-            <url>https://github.com/plaguv</url>
+            <id>${developer.name}</id>
+            <name>${developer.name}</name>
+            <url>${developer.url}</url>
         </developer>
     </developers>
 
