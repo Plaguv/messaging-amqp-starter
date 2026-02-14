@@ -2,7 +2,7 @@
 
 ## ``amqp``
 
-Class: ``io.github.plaguv.messaging.config.properties.AmqpProperties``
+Class: ``io.github.plaguv.core.properties.AmqpProperties``
 
 | Key                          | Type       | Description                                                                  | Default value | Deprecation |
 |------------------------------|------------|------------------------------------------------------------------------------|---------------|-------------|
@@ -11,10 +11,13 @@ Class: ``io.github.plaguv.messaging.config.properties.AmqpProperties``
 
 ## ``amqp.declaration``
 
-Class: ``io.github.plaguv.messaging.config.properties.AmqpDeclarationProperties``
+Class: ``io.github.plaguv.core.properties.AmqpDeclarationProperties``
 
 | Key                                             | Type        | Description                                   | Default value | Deprecation |
 |-------------------------------------------------|-------------|-----------------------------------------------|---------------|-------------|
+| ``amqp.declaration.declare-direct-queue``       | ``Boolean`` | Automatically declares a direct queue         | ``true``      | N/A         |
+| ``amqp.declaration.declare-group-queue``        | ``Boolean`` | Automatically declares a group queue          | ``true``      | N/A         |
+| ``amqp.declaration.declare-broadcast-queue``    | ``Boolean`` | Automatically declares a broadcast queue      | ``true``      | N/A         |
 | ``amqp.declaration.declare-exchange-durable``   | ``Boolean`` | Automatically declares exchanges as durable   | ``true``      | N/A         |
 | ``amqp.declaration.declare-exchange-deletable`` | ``Boolean`` | Automatically declares exchanges as deletable | ``false``     | N/A         |
 | ``amqp.declaration.declare-queue-durable``      | ``Boolean`` | Automatically declares queues as durable      | ``true``      | N/A         |
@@ -23,7 +26,7 @@ Class: ``io.github.plaguv.messaging.config.properties.AmqpDeclarationProperties`
 
 ## ``amqp.skip``
 
-Class: ``io.github.plaguv.messaging.config.properties.AmqpStartupProperties``
+Class: ``io.github.plaguv.core.properties.AmqpStartupProperties``
 
 | Key                              | Type        | Description                                                          | Default value | Deprecation |
 |----------------------------------|-------------|----------------------------------------------------------------------|---------------|-------------|

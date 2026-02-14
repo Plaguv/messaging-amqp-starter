@@ -4,44 +4,18 @@
 
 ## 📦 Messaging AMQP Spring Boot Starter
 
-A standardized, opinionated messaging template for RabbitMQ, designed for internal event-driven communication in Spring
-Boot applications.
+A standardized, opinionated messaging framework for RabbitMQ, designed for internal event-driven communication in Spring Boot applications.
 
-This starter aims to:
+This starter provides:
+- Elimination of repetitive RabbitMQ setup
+- Enforced domain consistency, type safety, and naming conventions across services
+- A plug-and-play experience that is fully extensible
 
-- Eliminate repetitive RabbitMQ setup
-- Enforce domain consistency, type safety, and naming conventions across services
-- Provide a plug-and-play experience while remaining fully extensible
-
-All components are exposed via interfaces, and the starter is fully auto-configured using Spring Boot’s
-``@AutoConfiguration``.
-
-## 🧩 Modules
-
-1. Contract
-
-   Defines the canonical messaging contracts shared across services:
-
-    - All events and their payloads
-    - The canonical container for messages: ``EventEnvelope``, which includes:
-        - ``EventMetadata``
-        - ``EventRouting``
-        - ``EventPayload``
-
-   This ensures consistent message structure across all services.
-
-2. Messaging
-
-   Provides the RabbitMQ implementation for publishing and consuming events:
-
-- ``AutoConfiguration`` and properties for all messaging components
-- ``EventRouter`` for deterministic routing based on EventEnvelope
-- ``ListenerDiscoverer`` and ``TopologyDeclarer`` for automatic queue/exchange/binding setup
-- ``EventEnvelope`` publisher component
+All components are exposed via interfaces, and the starter is fully autoconfigured using Spring Boot’s ``@AutoConfiguration``.
 
 ## ⚙️ Configuration
 
-At minimum, each application must define its central exchange and central application, which act as namespaces:
+At minimum, each application must define its central exchange and central application, which act as namespaces.
 
 ````yaml
 amqp:
@@ -49,14 +23,7 @@ amqp:
   central-application: starter # or ${spring.application.name}
 ````
 
-These values are used to derive:
-
-- Exchanges
-- Queues
-- Routing keys
-- Bindings
-
-Automatically, ensuring consistent naming and topology across services.
+Further details for configurations are available [here](.docs/CONFIGURATION.md)
 
 ## 📦 Installation
 
@@ -82,61 +49,10 @@ dependencies {
 }
 ````
 
-## 🚀 Usage Examples
+## 🔧 Usage Examples
 
-#### ✉️ Defining an event
+Usage examples are documented in detail:
 
-To define an event recognized by the starter, simply create a class or record and annotate it with ``@Event``.
-The ``@Event`` annotation requires a ``domain`` and optionally a version (defaults to ``1.0.0``).
-
-````java
-
-@Event(domain = EventDomain.STORE)
-public record StoreOpenedEvent(
-        long storeId,
-        Instant openedAt
-) {
-}
-````
-
-#### 📤 Publishing an event
-
-Publishing an event is straightforward:
-
-1. Inject the ``EventPublisher`` bean.
-2. Build an ``EventEnvelope`` with metadata, routing, and payload.
-3. Call ``publishMessage()`` - the starter handles everything else (exchange, queue, bindings, routing).
-
-````java
-EventPayload payload = EventPayload.valueOf(
-        new StoreOpenedEvent(5L)
-);
-
-EventEnvelope envelope = EventEnvelopeBuilder.defaults()
-        .ofEventPayload(payload)
-        .built();
-
-// Inject as a Spring Bean via Constructor injection or @Autowired field
-EventPublisher publisher;
-publisher.publishMessage(eventEnvelope);
-````
-
-> The builder infers all required routing and metadata based on the payload type.
-
-#### 📤 Listening to an event
-
-Listening to events is just as simple:
-
-- Annotate a method with ``@AmqpListener``
-- The method parameter type determines which event is listened to.
-- **Exactly one parameter** is required, and it must be annotated with ``@Event``.
-
-````java
-
-@AmqpListener
-public void onStoreOpened(StoreOpenedEvent event) {
-    // handle event
-}
-````
-
-> The starter automatically declares the necessary queues, exchanges, and bindings based on the event type and namespace.
+- [Defining an event](.docs/EVENT-CREATION.MD)
+- [Publishing an event](.docs/EVENT-PUBLISHING.MD)
+- [Listening to an event](.docs/EVENT-LISTENING.MD)
