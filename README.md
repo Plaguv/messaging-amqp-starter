@@ -35,7 +35,7 @@ Further details for configurations are available [here](.docs/CONFIGURATION.md)
 <dependencies>
     <dependency>
         <groupId>io.github.plaguv</groupId>
-        <artifactId>messaging-amqp-spring-boot-starter</artifactId>
+        <artifactId>plaguv-amqp-spring-boot-starter</artifactId>
         <version>1.0.0</version>
     </dependency>
 </dependencies>
@@ -45,7 +45,7 @@ Further details for configurations are available [here](.docs/CONFIGURATION.md)
 
 ````gradle
 dependencies {
-    implementation 'io.github.plaguv:messaging-amqp-spring-boot-starter:1.0.0'
+    implementation 'io.github.plaguv:plaguv-amqp-spring-boot-starter:1.0.0'
 }
 ````
 
