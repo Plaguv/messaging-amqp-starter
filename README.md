@@ -27,8 +27,6 @@ Further details for configurations are available [here](.docs/CONFIGURATION.md)
 
 ## 📦 Installation
 
-> Note: This dependency is currently not published to Maven Central.
-
 #### Maven
 
 ````maven
@@ -36,7 +34,7 @@ Further details for configurations are available [here](.docs/CONFIGURATION.md)
     <dependency>
         <groupId>io.github.plaguv</groupId>
         <artifactId>plaguv-amqp-spring-boot-starter</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
 ````

@@ -1,12 +1,13 @@
 package io.github.plaguv.starter.autoconfigure;
 
-import io.github.plaguv.core.utlity.properties.AmqpDeclarationProperties;
 import io.github.plaguv.core.utlity.properties.AmqpProperties;
-import io.github.plaguv.core.utlity.properties.AmqpStartupProperties;
 import io.github.plaguv.core.utlity.AmqpEventRouter;
 import io.github.plaguv.core.utlity.EventRouter;
 import io.github.plaguv.core.utlity.converter.EventPayloadArgumentResolver;
 import io.github.plaguv.core.utlity.converter.EventPayloadByteConverter;
+import io.github.plaguv.starter.properties.AmqpDeclarationPropertiesConfiguration;
+import io.github.plaguv.starter.properties.AmqpPropertiesConfiguration;
+import io.github.plaguv.starter.properties.AmqpStartupPropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -30,9 +31,9 @@ import java.util.List;
 
 @AutoConfiguration(after = RabbitAutoConfiguration.class)
 @EnableConfigurationProperties({
-        AmqpProperties.class,
-        AmqpDeclarationProperties.class,
-        AmqpStartupProperties.class
+        AmqpPropertiesConfiguration.class,
+        AmqpDeclarationPropertiesConfiguration.class,
+        AmqpStartupPropertiesConfiguration.class
 })
 public class AmqpAutoConfiguration {
 
@@ -72,7 +73,7 @@ public class AmqpAutoConfiguration {
     }
 
     @Bean
-//    @ConditionalOnMissingBean(SimpleRabbitListenerContainerFactory.class)
+    @ConditionalOnMissingBean(SimpleRabbitListenerContainerFactory.class)
     public SimpleRabbitListenerContainerFactory amqpEventListenerContainerFactory(ConnectionFactory connectionFactory, ObjectMapper objectMapper) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
 

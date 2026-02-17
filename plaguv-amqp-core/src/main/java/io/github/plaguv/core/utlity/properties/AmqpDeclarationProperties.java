@@ -1,46 +1,21 @@
 package io.github.plaguv.core.utlity.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+public interface AmqpDeclarationProperties {
+    Boolean declareDirectBinding();
 
-@ConfigurationProperties(prefix = "amqp.declaration")
-public record AmqpDeclarationProperties(
-        Boolean declareDirectBinding,
-        Boolean declareGroupBinding,
-        Boolean declareBroadcastBinding,
+    Boolean declareGroupBinding();
 
-        Boolean declareExchangeDurable,
-        Boolean declareExchangeDeletable,
+    Boolean declareBroadcastBinding();
 
-        Boolean declareQueueDurable,
-        Boolean declareQueueExclusive,
-        Boolean declareQueueDeletable
-) {
-    public AmqpDeclarationProperties {
-        declareDirectBinding = declareDirectBinding != null
-                ? declareDirectBinding
-                : true;
-        declareGroupBinding = declareGroupBinding != null
-                ? declareGroupBinding
-                : true;
-        declareBroadcastBinding = declareBroadcastBinding != null
-                ? declareBroadcastBinding
-                : true;
 
-        declareExchangeDurable = declareExchangeDurable != null
-                ? declareExchangeDurable
-                : true;
-        declareExchangeDeletable = declareExchangeDeletable != null
-                ? declareExchangeDeletable
-                : false;
+    Boolean declareExchangeDurable();
 
-        declareQueueDurable = declareQueueDurable != null
-                ? declareQueueDurable
-                : true;
-        declareQueueExclusive = declareQueueExclusive != null
-                ? declareQueueExclusive
-                : false;
-        declareQueueDeletable = declareQueueDeletable != null
-                ? declareQueueDeletable
-                : false;
-    }
+    Boolean declareExchangeDeletable();
+
+
+    Boolean declareQueueDurable();
+
+    Boolean declareQueueExclusive();
+
+    Boolean declareQueueDeletable();
 }

@@ -22,10 +22,18 @@ class AmqpEventRouterTest {
     @BeforeEach
     void beforeEach() {
         eventRouter = new AmqpEventRouter(
-                new AmqpProperties(
-                        "central",
-                        "starter"
-                ));
+                new AmqpProperties() {
+                    @Override
+                    public String centralExchange() {
+                        return "central";
+                    }
+
+                    @Override
+                    public String centralApplication() {
+                        return "starter";
+                    }
+                }
+        );
 
         storeOpenedEvent = new StoreOpenedEvent(5L);
 
